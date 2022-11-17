@@ -40,7 +40,7 @@ just start org2
 
 (or...) 
 ```shell
-just stop-network
+just start-network
 ```
 
 
