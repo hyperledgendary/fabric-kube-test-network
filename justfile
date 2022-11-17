@@ -73,7 +73,7 @@ operator:
 ###############################################################################
 
 # Bring up the entire network
-network-up: operator
+start-network: operator
     just start org0
     just start org1
     just start org2
@@ -81,19 +81,15 @@ network-up: operator
 # Start the nodes for an org
 start org:
     #!/bin/bash
-
-    # start the services
-    network/{{org}}/start.sh
-
-    # enroll users
-    network/{{org}}/enroll.sh
+    network/{{org}}/start.sh        # start the network service
+    network/{{org}}/enroll.sh       # enroll CA and org admin users
 
 # Enroll the users for an org
 enroll org:
     network/{{org}}/enroll.sh
 
 # Shut down the test network and remove all certificates
-clean:
+stop-network:
     #!/bin/bash
     rm -rf network/org0/enrollments
     rm -rf network/org1/enrollments

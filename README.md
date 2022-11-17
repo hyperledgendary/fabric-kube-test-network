@@ -40,7 +40,7 @@ just start org2
 
 (or...) 
 ```shell
-just network-up
+just stop-network
 ```
 
 
@@ -62,6 +62,10 @@ TODO:
 
 ## Teardown
 
+```shell
+just stop-network
+```
+or
 ```shell
 just unkind
 ```
