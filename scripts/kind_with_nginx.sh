@@ -103,14 +103,14 @@ function start_cert_manager() {
   # Check for a root CA certificate / secret created by a previous cluster.  If present, re-use the
   # cert as it could have been imported into the system's keychain.
   # TODO: this would be best stored outside of the project - maybe override with an ENV?
-  local issuer_secret_path=kustomization/cert-manager/ca-issuer-secret.yaml
+  local issuer_secret_path=kind/cert-manager/ca-issuer-secret.yaml
   if test -f ${issuer_secret_path}; then
     echo "Overriding CA root issuer secret" ${issuer_secret_path}
     kubectl -n cert-manager create -f ${issuer_secret_path}
   fi
 
   # Apply the cert-manager cluster-issuers
-  kubectl -n cert-manager apply -k kustomization/cert-manager
+  kubectl -n cert-manager apply -k kind/cert-manager
 
   # Save the root cert for future use in future KIND clusters
   if ! test -f ${issuer_secret_path}; then
@@ -124,7 +124,7 @@ function start_cert_manager() {
 # Install an Nginx ingress controller bound to port 80 and 443.
 #
 function start_nginx() {
-  kubectl apply -k kustomization/nginx
+  kubectl apply -k kind/nginx
 
   sleep 10
 
