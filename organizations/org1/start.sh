@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 . scripts/utils.sh
 
@@ -7,7 +8,7 @@
 #
 print "starting org1 CA"
 
-apply_template network/org1/org1-ca.yaml
+apply_template organizations/org1/org1-ca.yaml
 sleep 5
 wait_for ibpca org1-ca
 
@@ -23,8 +24,8 @@ print "starting org1 orderers"
 
 print "starting org1 peers"
 
-apply_template network/org1/org1-peer1.yaml
-apply_template network/org1/org1-peer2.yaml
+apply_template organizations/org1/org1-peer1.yaml
+apply_template organizations/org1/org1-peer2.yaml
 sleep 5
 
 wait_for ibppeer org1-peer1

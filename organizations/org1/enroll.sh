@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 . scripts/utils.sh
 
@@ -9,16 +10,14 @@ ADMIN_PASS=org1adminpw
 #
 # Save all of the organization enrollments in a local folder.
 #
-ENROLLMENTS_DIR=${PWD}/network/org1/enrollments
-mkdir -p $ENROLLMENTS_DIR
+ENROLLMENTS_DIR=${PWD}/organizations/org1/enrollments
 
 
 #
 # Before we can work with the CA, extract the CA's TLS certificate and
 # store in .pem format for access with client utilities.
 #
-ORG_CA_CERT=$(connection_profile_cert org1-ca .tls.cert)
-echo $ORG_CA_CERT | base64 -d > $ENROLLMENTS_DIR/org1-ca-tls-cert.pem
+write_pem org1-ca .tls.cert $ENROLLMENTS_DIR/org1-ca-tls-cert.pem
 
 
 #
