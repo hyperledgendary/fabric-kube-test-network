@@ -16,32 +16,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-set -euo pipefail
-. scripts/utils.sh
 
-#
-# CA
-#
-print "starting org2 CA"
+SUCCESS="✅"
+WARN="⚠️ "
 
-apply_template organizations/org2/org2-ca.yaml
-sleep 5
-wait_for ibpca org2-ca
+# tests if varname is defined in the env AND it's an existing directory
+function must_declare() {
+  local varname=$1
 
-# Retrieve the org CA certificate for the bootstrap enrollment of peers/orderers.
-# This value will be substituted from the environment into the node CRDs.
-export CA_CERT=$(connection_profile_cert org2-ca .tls.cert)
+  if [[ ${!varname+x} ]]
+  then
+    printf "\r%s %-30s%s\n" $SUCCESS $varname ${!varname}
+  else
+    printf "\r%s  %-30s %s\n" $WARN $varname
+    EXIT=1
+  fi
+}
 
-#
-# Network nodes
-#
-print "starting org2 orderers"
+function check() {
+  local name=$1
+  local message=$2
 
-print "starting org2 peers"
+  printf "🤔 %s" $name
 
-apply_template organizations/org2/org2-peer1.yaml
-apply_template organizations/org2/org2-peer2.yaml
-sleep 5
+  if $name &>/dev/null ; then
+    printf "\r%s %-30s" $SUCCESS $name
+  else
+    printf "\r%s  %-30s" $WARN $name
+    EXIT=1
+  fi
 
-wait_for ibppeer org2-peer1
-wait_for ibppeer org2-peer2
+  echo $message
+}

@@ -24,9 +24,11 @@
 #
 ###############################################################################
 
-
 # Ensure all properties are exported as shell env-vars
 set export
+
+# Use environment variables from the (git-ignored and hidden) .env files
+set dotenv-load
 
 # set the current directory, and the location of the test dats
 CWDIR := justfile_directory()
@@ -40,7 +42,7 @@ check:
 
 
 ###############################################################################
-# KIND / k8s
+# Environment and just parameters
 ###############################################################################
 
 CLUSTER_NAME        := env_var_or_default("TEST_NETWORK_CLUSTER_NAME",      "kind")
@@ -48,14 +50,20 @@ NAMESPACE           := env_var_or_default("TEST_NETWORK_NAMESPACE",         "tes
 OPERATOR_IMAGE      := env_var_or_default("TEST_NETWORK_OPERATOR_IMAGE",    "ghcr.io/hyperledger-labs/fabric-operator:latest-amd64")
 FABRIC_VERSION      := env_var_or_default("TEST_NETWORK_FABRIC_VERSION",    "2.4.7")
 FABRIC_CA_VERSION   := env_var_or_default("TEST_NETWORK_FABRIC_CA_VERSION", "1.5.5")
+CHANNEL_NAME        := env_var_or_default("TEST_NETWORK_CHANNEL_NAME",      "mychannel")
 
-# Start a local KIND cluster with nginx and insecure docker registry
+
+###############################################################################
+# KIND / k8s targets
+###############################################################################
+
+# Start a local KIND cluster with nginx ingress
 kind: unkind
     scripts/kind_with_nginx.sh {{CLUSTER_NAME}}
 
 # Shut down the KIND cluster
 unkind:
-    #!/bin/bash
+    #!/usr/bin/env bash
     kind delete cluster --name {{CLUSTER_NAME}}
 
     if docker inspect kind-registry &>/dev/null; then
@@ -80,10 +88,9 @@ start-network: operator
 
 # Start the nodes for an org
 start org:
-    #!/bin/bash
+    #!/usr/bin/env bash
     organizations/{{org}}/start.sh      # start the network service
     organizations/{{org}}/enroll.sh     # enroll CA and org admin users
-    organizations/{{org}}/export_msp.sh # Export the org MSP to the consortium
 
 # Enroll the users for an org
 enroll org:
@@ -91,19 +98,39 @@ enroll org:
 
 # Shut down the test network and remove all certificates
 stop-network:
-    #!/bin/bash
+    #!/usr/bin/env bash
     rm -rf organizations/org0/enrollments && echo "org0 enrollments deleted"
     rm -rf organizations/org1/enrollments && echo "org1 enrollments deleted"
     rm -rf organizations/org2/enrollments && echo "org2 enrollments deleted"
-    rm -rf channel-msp && echo "consortium MSP deleted"
+    rm -rf channel-config/organizations   && echo "consortium MSP deleted"
+    rm channel-config/{{CHANNEL_NAME}}_genesis_block.pb && echo {{CHANNEL_NAME}} " genesis block deleted"
 
     kubectl delete ns {{ NAMESPACE }} --ignore-not-found=true
 
+# Check that all network services are running
+check-network:
+    checks/check-network.sh
+
 
 ###############################################################################
-# Channel
+# Channel Construction
 ###############################################################################
 
-# Export the MSP certificates for an organization
+# Export org MSP certificates to the consortium organizer
 export-msp org:
     organizations/{{org}}/export_msp.sh
+
+# Export the MSP certificates for all orgs
+gather-msp:
+    just export-msp org0
+    just export-msp org1
+    just export-msp org2
+
+# Create the channel genesis block
+create-genesis-block: check-network gather-msp
+    channel-config/create_genesis_block.sh
+
+# inspect the genesis block
+inspect-genesis-block:
+    #!/usr/bin/env bash
+    configtxgen -inspectBlock channel-config/mychannel_genesis_block.pb | jq
