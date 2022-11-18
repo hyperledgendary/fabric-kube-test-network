@@ -81,22 +81,22 @@ start-network: operator
 # Start the nodes for an org
 start org:
     #!/bin/bash
-    network/{{org}}/start.sh        # start the network service
-    network/{{org}}/enroll.sh       # enroll CA and org admin users
+    organizations/{{org}}/start.sh        # start the network service
+    organizations/{{org}}/enroll.sh       # enroll CA and org admin users
 
 # Enroll the users for an org
 enroll org:
-    network/{{org}}/enroll.sh
+    organizations/{{org}}/enroll.sh
 
 # Shut down the test network and remove all certificates
 stop-network:
     #!/bin/bash
-    rm -rf network/org0/enrollments
-    rm -rf network/org1/enrollments
-    rm -rf network/org2/enrollments
-    echo "network/org0/enrollments deleted"
-    echo "network/org1/enrollments deleted"
-    echo "network/org2/enrollments deleted"
+    rm -rf organizations/org0/enrollments
+    rm -rf organizations/org1/enrollments
+    rm -rf organizations/org2/enrollments
+    echo "organizations/org0/enrollments deleted"
+    echo "organizations/org1/enrollments deleted"
+    echo "organizations/org2/enrollments deleted"
 
     kubectl delete ns {{ NAMESPACE }} --ignore-not-found=true
 
