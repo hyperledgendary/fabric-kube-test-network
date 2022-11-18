@@ -99,7 +99,7 @@ spec:
           expiry: 87600h0m0s
   customNames:
     pvc: {}
-  domain: localho.st
+  domain: org0.localho.st
   images:
     caImage: hyperledger/fabric-ca
     caTag: 1.5.5
