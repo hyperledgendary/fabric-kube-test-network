@@ -22,8 +22,8 @@ metadata:
   name: org1-peer1
 spec:
   version: "${FABRIC_VERSION}"
-  domain: "localho.st"
-  peerExternalEndpoint: "test-network-org1-peer1-peer.localho.st:443"
+  domain: "org1.localho.st"
+  peerExternalEndpoint: "test-network-org1-peer1-peer.org1.localho.st:443"
   license:
     accept: true
   action:
@@ -48,7 +48,7 @@ spec:
     enrollment:
       component:
         caname: ca
-        cahost: "test-network-org1-ca-ca.localho.st"
+        cahost: "test-network-org1-ca-ca.org1.localho.st"
         caport: "443"
         catls:
           cacert: "${CA_CERT}"
@@ -56,7 +56,7 @@ spec:
         enrollsecret: "peer1pw"
       tls:
         caname: tlsca
-        cahost: "test-network-org1-ca-ca.localho.st"
+        cahost: "test-network-org1-ca-ca.org1.localho.st"
         caport: "443"
         catls:
           cacert: "${CA_CERT}"
@@ -66,7 +66,7 @@ spec:
           hosts:
             - "org1-peer1"
             - "org1-peer1.test-network.svc.cluster.local"
-            - "test-network-org1-peer-gateway.localho.st"
+            - "test-network-org1-peer-gateway.org1.localho.st"
   chaincodeBuilderConfig:
     peername: org1-peer1
   service:

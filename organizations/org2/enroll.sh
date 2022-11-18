@@ -39,7 +39,7 @@ else
   print "Enrolling $ADMIN_USER"
   FABRIC_CA_CLIENT_HOME=$ENROLLMENTS_DIR/$ADMIN_USER \
     fabric-ca-client enroll \
-      --url https://${ADMIN_USER}:${ADMIN_PASS}@test-network-org2-ca-ca.localho.st \
+      --url https://${ADMIN_USER}:${ADMIN_PASS}@test-network-org2-ca-ca.org2.localho.st \
       --tls.certfiles $ENROLLMENTS_DIR/org2-ca-tls-cert.pem
 
   # Enrollment creates a key with a dynamic, hashed file name.  Move this to a predictable location
