@@ -1,15 +1,21 @@
 # Kubernetes Test Network
 
-Create a _cloud-native_ 
+Create a 
 Hyperledger Fabric [test-network](https://github.com/hyperledger/fabric-samples/tree/main/test-network) 
-on [Kubernetes](https://kind.sigs.k8s.io) 
-with the [fabric-operator](https://github.com/hyperledger-labs/fabric-operator).  
+on [KIND](https://kind.sigs.k8s.io) 
+with [fabric-operator](https://github.com/hyperledger-labs/fabric-operator).  
 
 Objective:  provide _crystal clarity_ to Fabric's _MSP_ and certificate structures, 
-focusing on the inductive construction of a multi-org consortium.
+focusing on the inductive construction of a multi-org channel.
 
 ![Dark Side of the Moon](https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png)
 ###### (The Dark Side of the Moon [From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png#filelinks) )
+
+For best results, start a new shell for each organization in the consortium.  Imagine that each
+shell is running commands on behalf of the org's Fabric administrator.  (In a future rev of this
+project, each target _will_ run `peer` CLI commands with the environment correctly configured as
+the org admin.)
+
 
 ## Usage - TL/DR:
 
@@ -25,11 +31,6 @@ Available recipes:
     start org  # Start the nodes for an org
     unkind     # Shut down the KIND cluster
 ```
-
-For best results, start a new shell for each organization in the consortium.  Imagine that each
-shell is running commands on behalf of the org's Fabric administrator.  (In a future rev of this 
-project, each target _will_ run `peer` CLI commands with the environment correctly configured as 
-the org admin.) 
 
 Ready?
 ```shell
