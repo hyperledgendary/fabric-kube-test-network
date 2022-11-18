@@ -8,7 +8,8 @@ the set up of independent organizations working together in a shared consortium.
 ![Dark Side of the Moon](https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png)
 ###### (The Dark Side of the Moon [From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png#filelinks) )
 
-Usage:
+## Usage - TL/DR:
+
 ```shell
 % just 
 Available recipes:
@@ -21,9 +22,6 @@ Available recipes:
     start org  # Start the nodes for an org
     unkind     # Shut down the KIND cluster
 ```
-
-
-## TL/DR
 
 Ready?
 ```shell
