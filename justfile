@@ -81,8 +81,9 @@ start-network: operator
 # Start the nodes for an org
 start org:
     #!/bin/bash
-    organizations/{{org}}/start.sh        # start the network service
-    organizations/{{org}}/enroll.sh       # enroll CA and org admin users
+    organizations/{{org}}/start.sh      # start the network service
+    organizations/{{org}}/enroll.sh     # enroll CA and org admin users
+    organizations/{{org}}/export_msp.sh # Export the org MSP to the consortium
 
 # Enroll the users for an org
 enroll org:
@@ -91,12 +92,10 @@ enroll org:
 # Shut down the test network and remove all certificates
 stop-network:
     #!/bin/bash
-    rm -rf organizations/org0/enrollments
-    rm -rf organizations/org1/enrollments
-    rm -rf organizations/org2/enrollments
-    echo "organizations/org0/enrollments deleted"
-    echo "organizations/org1/enrollments deleted"
-    echo "organizations/org2/enrollments deleted"
+    rm -rf organizations/org0/enrollments && echo "org0 enrollments deleted"
+    rm -rf organizations/org1/enrollments && echo "org1 enrollments deleted"
+    rm -rf organizations/org2/enrollments && echo "org2 enrollments deleted"
+    rm -rf channel-msp && echo "consortium MSP deleted"
 
     kubectl delete ns {{ NAMESPACE }} --ignore-not-found=true
 
@@ -104,3 +103,7 @@ stop-network:
 ###############################################################################
 # Channel
 ###############################################################################
+
+# Export the MSP certificates for an organization
+export-msp org:
+    organizations/{{org}}/export_msp.sh

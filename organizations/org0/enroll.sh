@@ -20,11 +20,16 @@ ENROLLMENTS_DIR=${PWD}/organizations/org0/enrollments
 write_pem org0-ca .tls.cert $ENROLLMENTS_DIR/org0-ca-tls-cert.pem
 
 
-
 #
 # Enroll the org channel admin
 #
 # Skip the enrollment if an enrollment was already made for the user.
+#
+# TODO: refactor this.  It should read something like:
+# enroll org0-ca org0admin org0adminpw $ENROLLMENTS_DIR
+#
+# TODO: refactor the above so that it is also easy to enroll rcaadmin at the TLS CA
+# enroll_tls (or something to change /msp -> /tls and call tlsca arg) 
 #
 if [ -f "$ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/key.pem" ]
 then
