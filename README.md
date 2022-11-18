@@ -6,8 +6,7 @@ Objective:  provide _crystal clarity_ to Fabric's multi-org _MSP_ abstraction, f
 the set up of independent organizations working together in a shared consortium.
 
 ![Dark Side of the Moon](https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png)
-###### The Dark Side of the Moon
-[From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png#filelinks)
+###### (The Dark Side of the Moon [From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png#filelinks) )
 
 Usage:
 ```shell
