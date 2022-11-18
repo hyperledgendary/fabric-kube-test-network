@@ -2,6 +2,12 @@
 
 Create a _cloud-native_ [test-network](https://github.com/hyperledger/fabric-samples/tree/main/test-network) on [KIND](https://kind.sigs.k8s.io) with the [Hyperledger Fabric Operator](https://github.com/hyperledger-labs/fabric-operator)  
 
+Objective:  provide _crystal clarity_ to Fabric's multi-org _MSP_ abstraction, focusing on 
+the set up of independent organizations working together in a shared consortium.
+
+![Dark Side of the Moon](https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png)
+
+
 Usage:
 ```shell
 % just 
