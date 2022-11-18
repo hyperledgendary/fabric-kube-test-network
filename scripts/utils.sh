@@ -30,3 +30,14 @@ function connection_profile_cert() {
     | base64 -d \
     | jq -r ${path}
 }
+
+# Extract, decode, and save a certificate in .pem format to a local file
+function write_pem() {
+  local node=$1
+  local jq_path=$2
+  local to_file=$3
+
+  mkdir -p $(dirname $to_file)
+
+  echo $(connection_profile_cert $node $jq_path) | base64 -d >& $to_file
+}

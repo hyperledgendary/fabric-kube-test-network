@@ -1,8 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
 . scripts/utils.sh
-
-# KISS: No scripting.  Just bring up org2 nodes.
 
 #
 # CA
@@ -13,9 +12,9 @@ apply_template organizations/org2/org2-ca.yaml
 sleep 5
 wait_for ibpca org2-ca
 
-# Retrieve the org CA certificate for the bootstrap enrollment of peers/orderers
-export CA_CERT=$(kubectl -n ${NAMESPACE} get cm/org2-ca-connection-profile -o json | jq -r .binaryData.\"profile.json\" | base64 -d | jq -r .tls.cert)
-
+# Retrieve the org CA certificate for the bootstrap enrollment of peers/orderers.
+# This value will be substituted from the environment into the node CRDs.
+export CA_CERT=$(connection_profile_cert org2-ca .tls.cert)
 
 #
 # Network nodes
