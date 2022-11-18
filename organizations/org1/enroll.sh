@@ -25,6 +25,12 @@ write_pem org1-ca .tls.cert $ENROLLMENTS_DIR/org1-ca-tls-cert.pem
 #
 # Skip the enrollment if an enrollment was already made for the user.
 #
+# TODO: refactor this.  It should read something like:
+# enroll org1-ca org1admin org1adminpw $ENROLLMENTS_DIR
+#
+# TODO: refactor the above so that it is also easy to enroll rcaadmin at the TLS CA
+# enroll_tls (or something to change /msp -> /tls and call tlsca arg) 
+#
 if [ -f "$ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/key.pem" ]
 then
   print "$ADMIN_USER has already been enrolled at org1-ca"
@@ -39,8 +45,6 @@ else
   # Enrollment creates a key with a dynamic, hashed file name.  Move this to a predictable location
   mv $ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/*_sk $ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/key.pem
 fi
-
-
 
 
 #

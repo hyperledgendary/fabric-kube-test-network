@@ -41,3 +41,27 @@ function write_pem() {
 
   echo $(connection_profile_cert $node $jq_path) | base64 -d >& $to_file
 }
+
+# create an enrollment MSP config.yaml
+function write_msp_config() {
+  local ca_name=$1
+  local ca_cert_name=$2
+  local msp_dir=$3
+
+  cat << EOF > ${msp_dir}/config.yaml
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/${ca_cert_name}
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/${ca_cert_name}
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/${ca_cert_name}
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/${ca_cert_name}
+    OrganizationalUnitIdentifier: orderer
+EOF
+}
