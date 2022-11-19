@@ -1,5 +1,4 @@
 .idea/
 bin/
 builders/
-config/
-channel-msp/
+.env
