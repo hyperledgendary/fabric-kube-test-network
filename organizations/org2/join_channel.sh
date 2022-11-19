@@ -19,21 +19,4 @@
 set -euo pipefail
 . scripts/utils.sh
 
-#
-# Save all of the organization enrollments in a local folder.
-#
-ENROLLMENTS_DIR=${PWD}/organizations/org2/enrollments
-
-#
-# Before we can work with the CA, extract the CA's TLS certificate and
-# store in .pem format for access with client utilities.
-#
-write_pem org2-ca .tls.cert $ENROLLMENTS_DIR/org2-ca-tls-cert.pem
-
-# Enroll the org2 admin user.  Registration is performed by the operator according
-# to entries in the org2-ca CRD.
-enroll org2 org2admin org2adminpw
-
-# Enroll the root CA administrator such that users can later be registered and enrolled for
-# identities of transactions submitted to the ledger.
-enroll org2 rcaadmin rcaadminpw
+print "Joining org2 to $CHANNEL_NAME"

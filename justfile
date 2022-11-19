@@ -134,3 +134,7 @@ create-genesis-block: check-network gather-msp
 inspect-genesis-block:
     #!/usr/bin/env bash
     configtxgen -inspectBlock channel-config/mychannel_genesis_block.pb | jq
+
+# Join an org to the channel
+join org:
+    organizations/{{org}}/join_channel.sh
