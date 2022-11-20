@@ -27,6 +27,7 @@ Available recipes:
     export-msp org        # Export org MSP certificates to the consortium organizer
     gather-msp            # Export the MSP certificates for all orgs
     inspect-genesis-block # inspect the genesis block
+    join org              # Join an org to the channel
     kind                  # Start a local KIND cluster with nginx ingress
     operator              # Launch the operator in the target namespace
     start org             # Start the nodes for an org
@@ -71,20 +72,31 @@ k9s -n test-network
 
 ## mychannel 
 
-Create the genesis block: 
+Create mychannel:
 ```shell
-just create-genesis-block
+just create-channel
 ```
 
-Inspect the genesis block: 
+(Or ...) 
+
+Create the channel: 
 ```shell
-just inspect-genesis-block
+just create-genesis-block   # run in "org0 admin" terminal
+just join org0              # run in "org0 admin" terminal
 ```
+
+Join peers to the channel: 
+```shell
+just join org1    # run in "org1 admin" terminal 
+just join org2    # run in "org2 admin" terminal 
+```
+
+
+## Chaincode and Gateway Client 
 
 
 TODO: 
 ```shell
-# just create-channel
 # just install-chaincode ... 
 # just run-gateway-client ... 
 ```

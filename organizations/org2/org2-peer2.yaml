@@ -42,7 +42,7 @@ spec:
     peerTag: ${FABRIC_VERSION}
     grpcwebImage: ghcr.io/hyperledger-labs/grpc-web
     grpcwebTag: latest
-  mspID: Org1MSP
+  mspID: Org2MSP
   mspSecret: org2-peer2-secret
   secret:
     enrollment:

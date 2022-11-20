@@ -19,15 +19,10 @@
 set -euo pipefail
 . scripts/utils.sh
 
-ADMIN_USER=org2admin
-ADMIN_PASS=org2adminpw
-
-
 #
 # Save all of the organization enrollments in a local folder.
 #
 ENROLLMENTS_DIR=${PWD}/organizations/org2/enrollments
-
 
 #
 # Before we can work with the CA, extract the CA's TLS certificate and
@@ -35,39 +30,14 @@ ENROLLMENTS_DIR=${PWD}/organizations/org2/enrollments
 #
 write_pem org2-ca .tls.cert $ENROLLMENTS_DIR/org2-ca-tls-cert.pem
 
+# Enroll the org2 admin user.  Registration is performed by the operator according
+# to entries in the org2-ca CRD.
+enroll org2 org2admin org2adminpw
 
-#
-# Enroll the org channel admin
-#
-# Skip the enrollment if an enrollment was already made for the user.
-#
-# TODO: refactor this.  It should read something like:
-# enroll org2-ca org2admin org2adminpw $ENROLLMENTS_DIR
-#
-# TODO: refactor the above so that it is also easy to enroll rcaadmin at the TLS CA
-# enroll_tls (or something to change /msp -> /tls and call tlsca arg)
-#
-if [ -f "$ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/key.pem" ]
-then
-  print "$ADMIN_USER has already been enrolled at org2-ca"
+# create an msp config.yaml to indicate the user is an admin for the org
+CA_CERT_NAME=${NAMESPACE}-org2-ca-ca-org2-localho-st-ca.pem
+write_msp_config org2-ca $CA_CERT_NAME $ENROLLMENTS_DIR/org2admin/msp
 
-else
-  print "Enrolling $ADMIN_USER"
-  FABRIC_CA_CLIENT_HOME=$ENROLLMENTS_DIR/$ADMIN_USER \
-    fabric-ca-client enroll \
-      --url https://${ADMIN_USER}:${ADMIN_PASS}@test-network-org2-ca-ca.org2.localho.st \
-      --tls.certfiles $ENROLLMENTS_DIR/org2-ca-tls-cert.pem
-
-  # Enrollment creates a key with a dynamic, hashed file name.  Move this to a predictable location
-  mv $ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/*_sk $ENROLLMENTS_DIR/$ADMIN_USER/msp/keystore/key.pem
-fi
-
-
-#
-# Enroll the org CA admin (for registering gateway client identities)
-#
-# todo: enroll the rcaadmin user so that gateway-client users may be constructed.
-#
-# RCAADMIN_USER=rcaadmin
-# RCAADMIN_PASS=rcaadminpw
-
+# Enroll the root CA administrator such that users can later be registered and enrolled for
+# identities of transactions submitted to the ledger.
+enroll org2 rcaadmin rcaadminpw
