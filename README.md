@@ -90,19 +90,26 @@ just start org2     # run in a separate "org2 admin" terminal
 
 ## mychannel 
 
+- Run in an "org0" terminal: 
 ```shell
-just create-genesis-block   # run in "org0 admin" terminal
+just create-genesis-block
 just join org0
 ```
 
+- Run in an "org1" terminal: 
 ```shell
-just join org1              # run in "org1 admin" terminal
-just join org2              # run in "org2 admin" terminal
+just join org1
+just install-cc org1
+```
 
+- Run in an "org2" terminal:
+```shell
+just join org2
+just install-cc org2 
 ```
 
 
-## Chaincode and Gateway Client 
+## Gateway Client Application
 
 TODO: do
 
