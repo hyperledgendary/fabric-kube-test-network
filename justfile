@@ -58,7 +58,7 @@ CHANNEL_NAME        := env_var_or_default("TEST_NETWORK_CHANNEL_NAME",      "myc
 ###############################################################################
 
 # Start a local KIND cluster with nginx ingress
-kind: unkind
+kind: check unkind
     scripts/kind_with_nginx.sh {{CLUSTER_NAME}}
 
 # Shut down the KIND cluster

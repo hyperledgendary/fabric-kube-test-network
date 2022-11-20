@@ -19,8 +19,6 @@
 set -euo pipefail
 . scripts/utils.sh
 
-print "Joining org1 to $CHANNEL_NAME"
-
 
 #
 # Set the environment context for the org1 administrator:
@@ -33,14 +31,16 @@ export CORE_PEER_TLS_ROOTCERT_FILE=$PWD/channel-config/organizations/peerOrganiz
 export CORE_PEER_CLIENT_CONNTIMEOUT=15s
 export CORE_PEER_DELIVERYCLIENT_CONNTIMEOUT=15s
 
+function join_peer() {
+  local org=$1
+  local peer=$2
 
-#
-# Join the peers to the channel
-#
-export CORE_PEER_ADDRESS=${NAMESPACE}-org1-peer1-peer.org1.localho.st:443
-peer channel join --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb 
+  print "joining $org $peer to $CHANNEL_NAME"
 
-export CORE_PEER_ADDRESS=${NAMESPACE}-org1-peer2-peer.org1.localho.st:443
-peer channel join --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb 
+  CORE_PEER_ADDRESS=${NAMESPACE}-${org}-${peer}-peer.${org}.localho.st:443 \
+    peer channel join \
+      --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb
+}
 
-
+join_peer org1 peer1
+join_peer org1 peer2

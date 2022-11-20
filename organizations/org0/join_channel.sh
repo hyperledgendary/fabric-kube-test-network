@@ -19,13 +19,10 @@
 set -euo pipefail
 . scripts/utils.sh
 
-print "Joining org0 to $CHANNEL_NAME"
-
 #
 # As the consortium organizer, the org0 will use osnadmin to join the ordering
 # nodes to the channel.
 #
-
 function join_orderer() {
   local orderer=$1
   print "joining orderer $orderer to $CHANNEL_NAME"
