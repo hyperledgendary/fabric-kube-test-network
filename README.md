@@ -37,6 +37,11 @@ Create `mychannel`:
 just create-channel
 ```
 
+Install `asset-transfer` chaincode:
+```shell
+just install-chaincode
+```
+
 
 ## Detailed Guide: 
 
@@ -45,12 +50,16 @@ just create-channel
 Available recipes:
     check                 # Run the check script to validate third party dependencies
     check-network         # Check that all network services are running
+    create-channel        # Create a channel and join all orgs to the consortium
     create-genesis-block  # Create the channel genesis block
     enroll org            # Enroll the users for an org
     export-msp org        # Export org MSP certificates to the consortium organizer
     gather-msp            # Export the MSP certificates for all orgs
     inspect-genesis-block # inspect the genesis block
+    install-cc org        # Install a smart contract on all peers in an org
+    install-chaincode     # Install a smart contract on all orgs
     join org              # Join an org to the channel
+    join-orgs             # Join all orgs to the channel
     kind                  # Start a local KIND cluster with nginx ingress
     operator              # Launch the operator in the target namespace
     start org             # Start the nodes for an org

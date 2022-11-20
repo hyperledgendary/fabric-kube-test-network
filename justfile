@@ -51,6 +51,11 @@ OPERATOR_IMAGE      := env_var_or_default("TEST_NETWORK_OPERATOR_IMAGE",    "ghc
 FABRIC_VERSION      := env_var_or_default("TEST_NETWORK_FABRIC_VERSION",    "2.4.7")
 FABRIC_CA_VERSION   := env_var_or_default("TEST_NETWORK_FABRIC_CA_VERSION", "1.5.5")
 CHANNEL_NAME        := env_var_or_default("TEST_NETWORK_CHANNEL_NAME",      "mychannel")
+CHAINCODE_NAME      := env_var_or_default("TEST_NETWORK_CHAINCODE_NAME",    "asset-transfer")
+CHAINCODE_VERSION   := env_var_or_default("TEST_NETWORK_CHAINCODE_VERSION", "v0.1.4")
+CHAINCODE_SEQUENCE  := env_var_or_default("TEST_NETWORK_CHAINCODE_SEQUENCE","1")
+CHAINCODE_PKG_NAME  := env_var_or_default("TEST_NETWORK_CHAINCODE_PKG_NAME","asset-transfer-typescript-v0.1.4.tgz")
+CHAINCODE_PKG_URL   := env_var_or_default("TEST_NETWORK_CHAINCODE_PKG_URL", "https://github.com/hyperledgendary/full-stack-asset-transfer-guide/releases/download/v0.1.4/" + CHAINCODE_PKG_NAME)
 
 
 ###############################################################################
@@ -102,6 +107,9 @@ stop-network:
     rm -rf organizations/org0/enrollments && echo "org0 enrollments deleted"
     rm -rf organizations/org1/enrollments && echo "org1 enrollments deleted"
     rm -rf organizations/org2/enrollments && echo "org2 enrollments deleted"
+    rm -rf organizations/org0/chaincode   && echo "org0 chaincode packages deleted"
+    rm -rf organizations/org1/chaincode   && echo "org1 chaincode packages deleted"
+    rm -rf organizations/org2/chaincode   && echo "org2 chaincode packages deleted"
     rm -rf channel-config/organizations   && echo "consortium MSP deleted"
     rm channel-config/{{CHANNEL_NAME}}_genesis_block.pb && echo {{CHANNEL_NAME}} " genesis block deleted"
 
@@ -109,7 +117,7 @@ stop-network:
 
 # Check that all network services are running
 check-network:
-    checks/check-network.sh
+    scripts/check-network.sh
 
 
 ###############################################################################
@@ -147,3 +155,25 @@ join-orgs:
 # Join an org to the channel
 join org:
     organizations/{{org}}/join_channel.sh
+
+
+###############################################################################
+# Chaincode and Gateway Appplication Development
+###############################################################################
+
+# Install a smart contract on all orgs
+install-chaincode:
+    just install-cc org1
+    just install-cc org2
+
+# Install a smart contract on all peers in an org
+install-cc org:
+    organizations/{{org}}/install_chaincode.sh
+
+show-context msp org peer:
+    #!/usr/bin/env bash
+
+    . scripts/utils.sh
+    appear_as {{msp}} {{org}} {{peer}}
+
+    export | egrep "CORE_PEER|FABRIC_|ORDERER_" | sort

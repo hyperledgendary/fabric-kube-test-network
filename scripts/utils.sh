@@ -7,6 +7,38 @@ function print() {
 	echo -e "${GREEN}${1}${NC}"
 }
 
+SUCCESS="✅"
+WARN="⚠️ "
+
+# tests if varname is defined in the env AND it's an existing directory
+function must_declare() {
+  local varname=$1
+
+  if [[ ${!varname+x} ]]
+  then
+    printf "\r%s %-30s%s\n" $SUCCESS $varname ${!varname}
+  else
+    printf "\r%s  %-30s %s\n" $WARN $varname
+    EXIT=1
+  fi
+}
+
+function check() {
+  local name=$1
+  local message=$2
+
+  printf "🤔 %s" $name
+
+  if $name &>/dev/null ; then
+    printf "\r%s %-30s" $SUCCESS $name
+  else
+    printf "\r%s  %-30s" $WARN $name
+    EXIT=1
+  fi
+
+  echo $message
+}
+
 function wait_for() {
   local type=$1
   local name=$2
@@ -66,8 +98,6 @@ NodeOUs:
 EOF
 }
 
-
-
 # Enroll a user at an org CA.
 function enroll() {
   do_enroll msp ca $@
@@ -94,18 +124,34 @@ function do_enroll() {
     return
   fi
 
-
   print "enrolling $org $caname $user"
   local ca_url=https://${user}:${pazz}@${NAMESPACE}-${org}-ca-ca.${org}.localho.st
   local tls_certfile=$ENROLLMENTS_DIR/${org}-ca-tls-cert.pem
 
-#  FABRIC_CA_CLIENT_HOME=$user_dir \
-    fabric-ca-client enroll \
-      --url           $ca_url \
-      --tls.certfiles $tls_certfile \
-      --mspdir $user_dir/$msp_type \
-      --caname $caname
+  fabric-ca-client  enroll \
+    --url           $ca_url \
+    --tls.certfiles $tls_certfile \
+    --mspdir        $user_dir/$msp_type \
+    --caname        $caname
 
   # Enrollment creates a key with a dynamic, hashed file name.  Move this to a predictable location
   mv $user_dir/$msp_type/keystore/*_sk $user_key
+}
+
+# Set the peer CLI environment in order to run commands as an org admin
+function appear_as() {
+  local mspid=$1
+  local org=$2
+  local peer=$3
+
+  export FABRIC_CFG_PATH=${PWD}/channel-config/config
+  export CORE_PEER_ADDRESS=test-network-${org}-${peer}-peer.${org}.localho.st:443
+  export CORE_PEER_LOCALMSPID=${mspid}
+  export CORE_PEER_MSPCONFIGPATH=$PWD/organizations/${org}/enrollments/${org}admin/msp
+  export CORE_PEER_TLS_ENABLED=true
+  export CORE_PEER_TLS_ROOTCERT_FILE=$PWD/channel-config/organizations/peerOrganizations/${org}.localho.st/msp/tlscacerts/tlsca-signcert.pem
+  export CORE_PEER_CLIENT_CONNTIMEOUT=15s
+  export CORE_PEER_DELIVERYCLIENT_CONNTIMEOUT=15s
+  export ORDERER_ENDPOINT=test-network-org0-orderersnode1-orderer.org0.localho.st:443
+  export ORDERER_TLS_CERT=${PWD}/channel-config/organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode1/tls/signcerts/tls-cert.pem
 }

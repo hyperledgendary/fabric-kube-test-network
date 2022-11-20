@@ -20,7 +20,7 @@
 # All checks run in the workshop root folder
 cd "$(dirname "$0")"/..
 
-. checks/utils.sh
+. scripts/utils.sh
 
 EXIT=0
 
