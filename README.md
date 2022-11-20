@@ -17,6 +17,29 @@ shell is running commands on behalf of the org's Fabric administrator.
 
 ## Usage - TL/DR:
 
+Check dependencies: 
+```shell
+./scripts/check.sh 
+```
+
+Create a KIND kubernetes cluster: 
+```shell
+just kind 
+```
+
+Start the network: 
+```shell
+just start-network
+```
+
+Create `mychannel`:
+```shell
+just create-channel
+```
+
+
+## Detailed Guide: 
+
 ```shell
 % just 
 Available recipes:
@@ -27,6 +50,7 @@ Available recipes:
     export-msp org        # Export org MSP certificates to the consortium organizer
     gather-msp            # Export the MSP certificates for all orgs
     inspect-genesis-block # inspect the genesis block
+    join org              # Join an org to the channel
     kind                  # Start a local KIND cluster with nginx ingress
     operator              # Launch the operator in the target namespace
     start org             # Start the nodes for an org
@@ -35,21 +59,17 @@ Available recipes:
     unkind                # Shut down the KIND cluster
 ```
 
-Ready?
+Check dependencies: 
 ```shell
-just check 
+just check
 ```
 
-Set:
+Create a KIND cluster, Nginx ingress, and local container registry:
 ```shell
-just kind 
+just kind
 ```
 
-Go!
-```shell
-just start-network
-```
-(or ...) 
+Start CAs, peers, and orderers:
 ```shell
 just operator 
 
@@ -58,50 +78,23 @@ just start org1     # run in a separate "org1 admin" terminal
 just start org2     # run in a separate "org2 admin" terminal 
 ```
 
-Double-check the network services:
-```shell
-just check-network
-```
-
-View k8s with [k9s](https://k9scli.io/topics/install/):
-```shell
-k9s -n test-network
-```
-
 
 ## mychannel 
 
-Create the genesis block: 
 ```shell
-just create-genesis-block
-```
-
-Inspect the genesis block: 
-```shell
-just inspect-genesis-block
-```
-
-Join the orderer organization to the channel: 
-```shell
+just create-genesis-block   # run in "org0 admin" terminal
 just join org0
 ```
 
-Join the peer organizations to the channel: 
 ```shell
-just join org1
-just join org2
+just join org1              # run in "org1 admin" terminal
+just join org2              # run in "org2 admin" terminal
 ```
 
 
 ## Chaincode and Gateway Client 
 
-
-TODO: 
-```shell
-# just install-chaincode ... 
-# just run-gateway-client ... 
-```
-
+TODO: do
 
 
 ## Teardown
