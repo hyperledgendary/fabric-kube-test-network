@@ -26,7 +26,7 @@ print "Joining org2 to $CHANNEL_NAME"
 # Set the environment context for the org2 administrator:
 #
 export FABRIC_CFG_PATH=${PWD}/channel-config/config
-export CORE_PEER_LOCALMSPID=Org1MSP
+export CORE_PEER_LOCALMSPID=Org2MSP
 export CORE_PEER_MSPCONFIGPATH=$PWD/organizations/org2/enrollments/org2admin/msp
 export CORE_PEER_TLS_ENABLED=true
 export CORE_PEER_TLS_ROOTCERT_FILE=$PWD/channel-config/organizations/peerOrganizations/org2.localho.st/msp/tlscacerts/tlsca-signcert.pem

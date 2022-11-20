@@ -116,6 +116,9 @@ check-network:
 # Channel Construction
 ###############################################################################
 
+# Create a channel and join all orgs to the consortium
+create-channel: create-genesis-block join-orgs
+
 # Export org MSP certificates to the consortium organizer
 export-msp org:
     organizations/{{org}}/export_msp.sh
@@ -134,6 +137,12 @@ create-genesis-block: check-network gather-msp
 inspect-genesis-block:
     #!/usr/bin/env bash
     configtxgen -inspectBlock channel-config/mychannel_genesis_block.pb | jq
+
+# Join all orgs to the channel
+join-orgs:
+    just join org0
+    just join org1
+    just join org2
 
 # Join an org to the channel
 join org:
