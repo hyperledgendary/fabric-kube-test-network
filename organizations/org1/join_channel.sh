@@ -44,5 +44,3 @@ function join_peer() {
 
 join_peer org1 peer1
 join_peer org1 peer2
-
-

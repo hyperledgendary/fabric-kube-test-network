@@ -89,6 +89,7 @@ just join org0
 ```shell
 just join org1              # run in "org1 admin" terminal
 just join org2              # run in "org2 admin" terminal
+
 ```
 
 

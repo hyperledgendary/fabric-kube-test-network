@@ -19,7 +19,6 @@
 set -euo pipefail
 . scripts/utils.sh
 
-
 #
 # Set the environment context for the org2 administrator:
 #
