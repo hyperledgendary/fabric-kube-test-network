@@ -81,10 +81,23 @@ Inspect the genesis block:
 just inspect-genesis-block
 ```
 
+Join the orderer organization to the channel: 
+```shell
+just join org0
+```
+
+Join the peer organizations to the channel: 
+```shell
+just join org1
+just join org2
+```
+
+
+## Chaincode and Gateway Client 
+
 
 TODO: 
 ```shell
-# just create-channel
 # just install-chaincode ... 
 # just run-gateway-client ... 
 ```

@@ -34,6 +34,10 @@ write_pem org1-ca .tls.cert $ENROLLMENTS_DIR/org1-ca-tls-cert.pem
 # to entries in the org2-ca CRD.
 enroll org1 org1admin org1adminpw
 
+# create an msp config.yaml to indicate the user is an admin for the org
+CA_CERT_NAME=${NAMESPACE}-org1-ca-ca-org1-localho-st-ca.pem
+write_msp_config org1-ca $CA_CERT_NAME $ENROLLMENTS_DIR/org1admin/msp
+
 # Enroll the root CA administrator such that users can later be registered and enrolled for
 # identities of transactions submitted to the ledger.
 enroll org1 rcaadmin rcaadminpw

@@ -20,3 +20,27 @@ set -euo pipefail
 . scripts/utils.sh
 
 print "Joining org2 to $CHANNEL_NAME"
+
+
+#
+# Set the environment context for the org2 administrator:
+#
+export FABRIC_CFG_PATH=${PWD}/channel-config/config
+export CORE_PEER_LOCALMSPID=Org1MSP
+export CORE_PEER_MSPCONFIGPATH=$PWD/organizations/org2/enrollments/org2admin/msp
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_TLS_ROOTCERT_FILE=$PWD/channel-config/organizations/peerOrganizations/org2.localho.st/msp/tlscacerts/tlsca-signcert.pem
+export CORE_PEER_CLIENT_CONNTIMEOUT=15s
+export CORE_PEER_DELIVERYCLIENT_CONNTIMEOUT=15s
+
+
+#
+# Join the peers to the channel
+#
+export CORE_PEER_ADDRESS=${NAMESPACE}-org2-peer1-peer.org2.localho.st:443
+peer channel join --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb 
+
+export CORE_PEER_ADDRESS=${NAMESPACE}-org2-peer2-peer.org2.localho.st:443
+peer channel join --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb 
+
+
