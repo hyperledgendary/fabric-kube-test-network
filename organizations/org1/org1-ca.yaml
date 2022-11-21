@@ -33,6 +33,9 @@ spec:
           - department1
       registry:
         identities:
+          - name: org1admin
+            pass: org1adminpw
+            type: admin
           - name: rcaadmin
             pass: rcaadminpw
             type: client
@@ -44,15 +47,15 @@ spec:
               hf.GenCRL: true
               hf.Registrar.Attributes: "*"
               hf.AffiliationMgr: true
+          - name: org1user
+            pass: org1userpw
+            type: client
           - name: peer1
             pass: peer1pw
             type: peer
           - name: peer2
             pass: peer2pw
             type: peer
-          - name: org1admin
-            pass: org1adminpw
-            type: admin
       debug: true
       signing:
         default:
@@ -62,30 +65,14 @@ spec:
         org1:
           - department1
           - department2
-#        org2:
-#          - department1
       registry:
         identities:
-#          - name: admin
-#            pass: adminpw
-#            type: client # todo: shouldn't this be an admin?
-#            attrs:
-#              hf.Registrar.Roles: "*"
-#              hf.Registrar.DelegateRoles: "*"
-#              hf.Revoker: true
-#              hf.IntermediateCA: true
-#              hf.GenCRL: true
-#              hf.Registrar.Attributes: "*"
-#              hf.AffiliationMgr: true
           - name: peer1
             pass: peer1pw
             type: peer
           - name: peer2
             pass: peer2pw
             type: peer
-#          - name: org1admin
-#            pass: org1adminpw
-#            type: admin
       debug: true
       signing:
         default:

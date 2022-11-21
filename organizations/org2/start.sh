@@ -45,3 +45,14 @@ sleep 5
 
 wait_for ibppeer org2-peer1
 wait_for ibppeer org2-peer2
+
+
+#
+# Deploy a load-balanced gateway service URL fronting the org's peer nodes.
+# When submitting transactions through the gateway, the gateway peers will
+# distribute transactions across the peers in the network, maintaining a
+# balanced ledger height.
+#
+print "creating gateway service alias org2-peer-gateway"
+
+apply_template organizations/org2/org2-peer-gateway.yaml

@@ -170,10 +170,14 @@ install-chaincode:
 install-cc org:
     organizations/{{org}}/install_chaincode.sh
 
+# Display env for targeting a peer with the Fabric binaries
 show-context msp org peer:
     #!/usr/bin/env bash
-
     . scripts/utils.sh
     appear_as {{msp}} {{org}} {{peer}}
 
+    # source <(just show-context Org1MSP org1 peer1)
     export | egrep "CORE_PEER|FABRIC_|ORDERER_" | sort
+
+    # todo: same as above but portable across all shells?
+    # export $(just show-context Org1MSP org1 peer1 | xargs)

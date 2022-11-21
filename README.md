@@ -48,24 +48,25 @@ just install-chaincode
 ```shell
 % just 
 Available recipes:
-    check                 # Run the check script to validate third party dependencies
-    check-network         # Check that all network services are running
-    create-channel        # Create a channel and join all orgs to the consortium
-    create-genesis-block  # Create the channel genesis block
-    enroll org            # Enroll the users for an org
-    export-msp org        # Export org MSP certificates to the consortium organizer
-    gather-msp            # Export the MSP certificates for all orgs
-    inspect-genesis-block # inspect the genesis block
-    install-cc org        # Install a smart contract on all peers in an org
-    install-chaincode     # Install a smart contract on all orgs
-    join org              # Join an org to the channel
-    join-orgs             # Join all orgs to the channel
-    kind                  # Start a local KIND cluster with nginx ingress
-    operator              # Launch the operator in the target namespace
-    start org             # Start the nodes for an org
-    start-network         # Bring up the entire network
-    stop-network          # Shut down the test network and remove all certificates
-    unkind                # Shut down the KIND cluster
+    check                     # Run the check script to validate third party dependencies
+    check-network             # Check that all network services are running
+    create-channel            # Create a channel and join all orgs to the consortium
+    create-genesis-block      # Create the channel genesis block
+    enroll org                # Enroll the users for an org
+    export-msp org            # Export org MSP certificates to the consortium organizer
+    gather-msp                # Export the MSP certificates for all orgs
+    inspect-genesis-block     # inspect the genesis block
+    install-cc org            # Install a smart contract on all peers in an org
+    install-chaincode         # Install a smart contract on all orgs
+    join org                  # Join an org to the channel
+    join-orgs                 # Join all orgs to the channel
+    kind                      # Start a local KIND cluster with nginx ingress
+    operator                  # Launch the operator in the target namespace
+    show-context msp org peer # Display env for targeting a peer with the Fabric binaries
+    start org                 # Start the nodes for an org
+    start-network             # Bring up the entire network
+    stop-network              # Shut down the test network and remove all certificates
+    unkind                    # Shut down the KIND cluster
 ```
 
 Check dependencies: 
@@ -90,28 +91,106 @@ just start org2     # run in a separate "org2 admin" terminal
 
 ## mychannel 
 
-- Run in an "org0" terminal: 
+- Bootstrap the channel and join the ordering nodes:
 ```shell
-just create-genesis-block
+just create-genesis-block   # run in the org0 terminal
+just inspect-genesis-block
+
 just join org0
 ```
 
-- Run in an "org1" terminal: 
+- Join peer organizations to the channel: 
 ```shell
-just join org1
-just install-cc org1
+just join org1              # run in the org1 terminal
+just join org2              # run in the org2 terminal
 ```
 
-- Run in an "org2" terminal:
+
+## Chaincode 
+
+- Install [asset-transfer](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/contracts/asset-transfer-typescript)
+  version [0.1.4](https://github.com/hyperledgendary/full-stack-asset-transfer-guide/releases/tag/v0.1.4) with the
+  Kubernetes [chaincode builder](https://github.com/hyperledger-labs/fabric-builder-k8s):
 ```shell
-just join org2
-just install-cc org2 
+just install-cc org1
+just install-cc org2
+```
+
+- Open a new terminal window to run interactive fabric CLI commands as the **org1 admin** (optional):
+```shell
+export PATH=$PWD/bin:$PATH
+source <(just show-context Org1MSP org1 peer1)
+```
+
+- Open a new terminal window to run fabric CLI commands as the **org2 admin** (optional):
+```shell
+export PATH=$PWD/bin:$PATH
+source <(just show-context Org2MSP org2 peer1)
+```
+
+- Query chaincode:
+```shell
+peer chaincode query \
+  -n asset-transfer \
+  -C mychannel \
+  -c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'     
 ```
 
 
 ## Gateway Client Application
 
-TODO: do
+When the org1 and org2 CAs are created, they include a bootstrap [registration](organizations/org1/org1-ca.yaml#L50-L52) 
+and [enrollment](organizations/org1/enroll.sh#L48) of a client identity for use in gateway application development.
+
+If the `just show-context` command has been loaded into the terminal, the peer, orderer, and
+CA certificate paths have been loaded into the environment.
+
+In an org admin shell, load the gateway client environment necessary to run the [trader-typescript](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/applications/trader-typescript) 
+sample gateway application:
+```shell
+export MSP_ID=Org1MSP        
+export ORG=org1
+
+# local MSP enrollment folder for the org client user
+export USER_MSP_DIR=$PWD/organizations/$ORG/enrollments/${ORG}user/msp
+
+# Path to private key file 
+export PRIVATE_KEY=$USER_MSP_DIR/keystore/key.pem
+
+# Path to user certificate file
+export CERTIFICATE=$USER_MSP_DIR/signcerts/cert.pem
+
+# Path to CA certificate
+export TLS_CERT=$CORE_PEER_TLS_ROOTCERT_FILE
+
+# Connect client applications to the load-balancing gateway peer alias:
+export ENDPOINT=test-network-${ORG}-peer-gateway.${ORG}.localho.st:443
+```
+
+- Run the gateway client application as `org1user`: 
+```shell
+# cd (somehow to) fabric-samples/full-stack-asset-transfer-guide/applications/trader-typescript 
+
+npm install
+``` 
+
+```shell
+# Create a yellow banana token owned by appleman@org1 
+npm start create banana bananaman yellow
+
+npm start getAllAssets
+
+# Transfer the banana among users / orgs 
+npm start transfer banana appleman Org1MSP
+
+npm start getAllAssets
+
+# Transfer the banana among users / orgs 
+npm start transfer banana bananaman Org2MSP
+
+# Error! Which org owns the banana? 
+npm start transfer banana bananaman Org1MSP
+```
 
 
 ## Teardown
