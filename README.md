@@ -163,8 +163,8 @@ export CERTIFICATE=$USER_MSP_DIR/signcerts/cert.pem
 # Path to CA certificate
 export TLS_CERT=$CORE_PEER_TLS_ROOTCERT_FILE
 
-# Gateway endpoint
-export ENDPOINT=$CORE_PEER_ADDRESS
+# Connect client applications to the load-balancing gateway peer alias:
+export ENDPOINT=test-network-${ORG}-peer-gateway.${ORG}.localho.st:443
 ```
 
 - Run the gateway client application as `org1user`: 
