@@ -71,15 +71,13 @@ peer lifecycle \
 #
 # Commit the chaincode to the channel
 #
-# todo: the chaincode version / sequence will be committed by org1
-
-#print "committing $CHAINCODE_NAME to $CHANNEL_NAME"
-#peer lifecycle \
-#  chaincode       commit \
-#  --channelID     ${CHANNEL_NAME} \
-#  --name          ${CHAINCODE_NAME} \
-#  --version       ${CHAINCODE_VERSION} \
-#  --sequence      ${CHAINCODE_SEQUENCE} \
-#  --orderer       ${ORDERER_ENDPOINT} \
-#  --tls --cafile  ${ORDERER_TLS_CERT} \
-#  --connTimeout   15s
+print "committing $CHAINCODE_NAME to $CHANNEL_NAME"
+peer lifecycle \
+  chaincode       commit \
+  --channelID     ${CHANNEL_NAME} \
+  --name          ${CHAINCODE_NAME} \
+  --version       ${CHAINCODE_VERSION} \
+  --sequence      ${CHAINCODE_SEQUENCE} \
+  --orderer       ${ORDERER_ENDPOINT} \
+  --tls --cafile  ${ORDERER_TLS_CERT} \
+  --connTimeout   15s

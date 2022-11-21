@@ -41,3 +41,8 @@ write_msp_config org2-ca $CA_CERT_NAME $ENROLLMENTS_DIR/org2admin/msp
 # Enroll the root CA administrator such that users can later be registered and enrolled for
 # identities of transactions submitted to the ledger.
 enroll org2 rcaadmin rcaadminpw
+
+# Enroll a client user for submitting transactions through a gateway
+# cliant application.  This user has been registered at the CA in the
+# bootstrap registrations by the operator.
+enroll org2 org2user org2userpw
