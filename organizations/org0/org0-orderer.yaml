@@ -19,7 +19,7 @@
 apiVersion: ibp.com/v1beta1
 kind: IBPOrderer
 metadata:
-  name: org0-orderers
+  name: orderer
 spec:
   version: "${FABRIC_VERSION}"
   domain: "org0.localho.st"
@@ -43,7 +43,7 @@ spec:
     - enrollment:
         component:
           caname: ca
-          cahost: test-network-org0-ca-ca.org0.localho.st
+          cahost: org0-ca-ca.org0.localho.st
           caport: "443"
           catls:
             cacert: "${CA_CERT}"
@@ -51,7 +51,7 @@ spec:
           enrollsecret: "orderer1pw"
         tls:
           caname: tlsca
-          cahost: test-network-org0-ca-ca.org0.localho.st
+          cahost: org0-ca-ca.org0.localho.st
           caport: "443"
           catls:
             cacert: "${CA_CERT}"
@@ -59,12 +59,12 @@ spec:
           enrollsecret: "orderer1pw"
           csr:
             hosts:
-              - "org0-orderersnode1"
-              - "org0-orderersnode1.test-network.svc.cluster.local"
+              - "orderernode1"
+              - "orderernode1.org0.svc.cluster.local"
     - enrollment:
         component:
           caname: ca
-          cahost: test-network-org0-ca-ca.org0.localho.st
+          cahost: org0-ca-ca.org0.localho.st
           caport: "443"
           catls:
             cacert: "${CA_CERT}"
@@ -72,7 +72,7 @@ spec:
           enrollsecret: "orderer2pw"
         tls:
           caname: tlsca
-          cahost: test-network-org0-ca-ca.org0.localho.st
+          cahost: org0-ca-ca.org0.localho.st
           caport: "443"
           catls:
             cacert: "${CA_CERT}"
@@ -80,12 +80,12 @@ spec:
           enrollsecret: "orderer2pw"
           csr:
             hosts:
-              - "org0-orderersnode2"
-              - "org0-orderersnode2.test-network.svc.cluster.local"
+              - "orderernode2"
+              - "orderernode2.org0.svc.cluster.local"
     - enrollment:
         component:
           caname: ca
-          cahost: test-network-org0-ca-ca.org0.localho.st
+          cahost: org0-ca-ca.org0.localho.st
           caport: "443"
           catls:
             cacert: "${CA_CERT}"
@@ -93,7 +93,7 @@ spec:
           enrollsecret: "orderer3pw"
         tls:
           caname: tlsca
-          cahost: test-network-org0-ca-ca.org0.localho.st
+          cahost: org0-ca-ca.org0.localho.st
           caport: "443"
           catls:
             cacert: "${CA_CERT}"
@@ -101,8 +101,8 @@ spec:
           enrollsecret: "orderer3pw"
           csr:
             hosts:
-              - "org0-orderersnode3"
-              - "org0-orderersnode3.test-network.svc.cluster.local"
+              - "orderernode3"
+              - "orderernode3.org0.svc.cluster.local"
 
   customNames:
     pvc: {}

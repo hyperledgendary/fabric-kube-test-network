@@ -19,28 +19,21 @@
 set -euo pipefail
 . scripts/utils.sh
 
+#
+# Bind all org1 services to the "org1" namespace
+#
+export NAMESPACE=org1
 
 #
-# Set the environment context for the org1 administrator:
+# Join peer1 to the channel
 #
-export FABRIC_CFG_PATH=${PWD}/channel-config/config
-export CORE_PEER_LOCALMSPID=Org1MSP
-export CORE_PEER_MSPCONFIGPATH=$PWD/organizations/org1/enrollments/org1admin/msp
-export CORE_PEER_TLS_ENABLED=true
-export CORE_PEER_TLS_ROOTCERT_FILE=$PWD/channel-config/organizations/peerOrganizations/org1.localho.st/msp/tlscacerts/tlsca-signcert.pem
-export CORE_PEER_CLIENT_CONNTIMEOUT=15s
-export CORE_PEER_DELIVERYCLIENT_CONNTIMEOUT=15s
+print "joining org1 peer1 to $CHANNEL_NAME"
+appear_as Org1MSP org1 peer1
+peer channel join --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb
 
-function join_peer() {
-  local org=$1
-  local peer=$2
-
-  print "joining $org $peer to $CHANNEL_NAME"
-
-  CORE_PEER_ADDRESS=${NAMESPACE}-${org}-${peer}-peer.${org}.localho.st:443 \
-    peer channel join \
-      --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb
-}
-
-join_peer org1 peer1
-join_peer org1 peer2
+#
+# Join peer2 to the channel
+#
+print "joining org1 peer2 to $CHANNEL_NAME"
+appear_as Org1MSP org1 peer2
+peer channel join --blockpath channel-config/${CHANNEL_NAME}_genesis_block.pb

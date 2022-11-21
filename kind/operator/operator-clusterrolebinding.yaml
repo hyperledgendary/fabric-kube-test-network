@@ -29,7 +29,13 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: fabric-operator
-    namespace: test-network
+    namespace: org0
+  - kind: ServiceAccount
+    name: fabric-operator
+    namespace: org1
+  - kind: ServiceAccount
+    name: fabric-operator
+    namespace: org2
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

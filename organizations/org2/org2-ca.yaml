@@ -19,7 +19,7 @@
 apiVersion: ibp.com/v1beta1
 kind: IBPCA
 metadata:
-  name: org2-ca
+  name: ca
 spec:
   action:
     renew: {}

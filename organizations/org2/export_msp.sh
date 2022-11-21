@@ -19,6 +19,11 @@
 set -euo pipefail
 . scripts/utils.sh
 
+#
+# Bind all org2 services to the "org2" namespace
+#
+export NAMESPACE=org2
+
 print "Exporting org2 channel MSP"
 
 #
@@ -27,6 +32,6 @@ print "Exporting org2 channel MSP"
 #
 ORG_MSP_DIR=channel-config/organizations/peerOrganizations/org2.localho.st/msp
 
-write_pem org2-ca .ca.signcerts $ORG_MSP_DIR/cacerts/ca-signcert.pem
-write_pem org2-ca .tlsca.signcerts $ORG_MSP_DIR/tlscacerts/tlsca-signcert.pem
-write_msp_config org2-ca ca-signcert.pem $ORG_MSP_DIR
+write_pem ca .ca.signcerts $ORG_MSP_DIR/cacerts/ca-signcert.pem
+write_pem ca .tlsca.signcerts $ORG_MSP_DIR/tlscacerts/tlsca-signcert.pem
+write_msp_config ca ca-signcert.pem $ORG_MSP_DIR

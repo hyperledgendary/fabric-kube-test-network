@@ -19,6 +19,12 @@
 set -euo pipefail
 . scripts/utils.sh
 
+#
+# Bind all org2 services to the "org2" namespace
+#
+export NAMESPACE=org2
+
+
 
 #
 # Download the chaincode package.  (Or prepare one here with pkgcc.sh, tar, etc.)

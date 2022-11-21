@@ -55,9 +55,9 @@ Organizations:
         Rule: "OR('OrdererMSP.admin')"
 
     OrdererEndpoints:
-      - org0-orderersnode1.test-network.svc.cluster.local:7050
-      - org0-orderersnode2.test-network.svc.cluster.local:7050
-      - org0-orderersnode3.test-network.svc.cluster.local:7050
+      - orderernode1.org0.svc.cluster.local:7050
+      - orderernode2.org0.svc.cluster.local:7050
+      - orderernode3.org0.svc.cluster.local:7050
 
   - &Org1
     # DefaultOrg defines the organization which is used in the sampleconfig
@@ -91,7 +91,7 @@ Organizations:
       # AnchorPeers defines the location of peers which can be used
       # for cross org gossip communication.  Note, this value is only
       # encoded in the genesis block in the Application section context
-      - Host: org1-peer1.test-network.svc.cluster.local
+      - Host: peer1.org1.svc.cluster.local
         Port: 7051
 
   - &Org2
@@ -125,7 +125,7 @@ Organizations:
       # AnchorPeers defines the location of peers which can be used
       # for cross org gossip communication.  Note, this value is only
       # encoded in the genesis block in the Application section context
-      - Host: org2-peer1.test-network.svc.cluster.local
+      - Host: peer1.org2.svc.cluster.local
         Port: 7051
 
 ################################################################################
@@ -235,18 +235,18 @@ Orderer: &OrdererDefaults
 
   EtcdRaft:
     Consenters:
-      - Host: org0-orderersnode1.test-network.svc.cluster.local
+      - Host: orderernode1.org0.svc.cluster.local
         Port: 7050
-        ClientTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode1/tls/signcerts/tls-cert.pem
-        ServerTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode1/tls/signcerts/tls-cert.pem
-      - Host: org0-orderersnode2.test-network.svc.cluster.local
+        ClientTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/orderernode1/tls/signcerts/tls-cert.pem
+        ServerTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/orderernode1/tls/signcerts/tls-cert.pem
+      - Host: orderernode2.org0.svc.cluster.local
         Port: 7050
-        ClientTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode2/tls/signcerts/tls-cert.pem
-        ServerTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode2/tls/signcerts/tls-cert.pem
-      - Host: org0-orderersnode3.test-network.svc.cluster.local
+        ClientTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/orderernode2/tls/signcerts/tls-cert.pem
+        ServerTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/orderernode2/tls/signcerts/tls-cert.pem
+      - Host: orderernode3.org0.svc.cluster.local
         Port: 7050
-        ClientTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode3/tls/signcerts/tls-cert.pem
-        ServerTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/org0-orderersnode3/tls/signcerts/tls-cert.pem
+        ClientTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/orderernode3/tls/signcerts/tls-cert.pem
+        ServerTLSCert: ../organizations/ordererOrganizations/org0.localho.st/orderers/orderernode3/tls/signcerts/tls-cert.pem
 
 
     # Options to be specified for all the etcd/raft nodes. The values here

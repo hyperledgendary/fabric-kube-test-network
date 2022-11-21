@@ -15,7 +15,7 @@ For best results, start a new shell for each organization in the consortium.  Im
 shell is running commands on behalf of the org's Fabric administrator.
 
 
-## Usage - TL/DR:
+## Venue:
 
 Check dependencies: 
 ```shell
@@ -27,86 +27,51 @@ Create a KIND kubernetes cluster:
 just kind 
 ```
 
-Start the network: 
+
+## Act I: Launch CAs, peers, and orderers
+
+Start the nodes in the network: 
 ```shell
-just start-network
+just start org0
+just start org1
+just start org2
 ```
 
-Create `mychannel`:
+Enroll admin, rcaadmin, and gateway users at the org CAs: 
 ```shell
-just create-channel
+just enroll org0
+just enroll org1
+just enroll org2
 ```
 
-Install `asset-transfer` chaincode:
 ```shell
-just install-chaincode
+just check-network
 ```
 
-
-## Detailed Guide: 
+## Act II: Build a Consortium
 
 ```shell
-% just 
-Available recipes:
-    check                     # Run the check script to validate third party dependencies
-    check-network             # Check that all network services are running
-    create-channel            # Create a channel and join all orgs to the consortium
-    create-genesis-block      # Create the channel genesis block
-    enroll org                # Enroll the users for an org
-    export-msp org            # Export org MSP certificates to the consortium organizer
-    gather-msp                # Export the MSP certificates for all orgs
-    inspect-genesis-block     # inspect the genesis block
-    install-cc org            # Install a smart contract on all peers in an org
-    install-chaincode         # Install a smart contract on all orgs
-    join org                  # Join an org to the channel
-    join-orgs                 # Join all orgs to the channel
-    kind                      # Start a local KIND cluster with nginx ingress
-    operator                  # Launch the operator in the target namespace
-    show-context msp org peer # Display env for targeting a peer with the Fabric binaries
-    start org                 # Start the nodes for an org
-    start-network             # Bring up the entire network
-    stop-network              # Shut down the test network and remove all certificates
-    unkind                    # Shut down the KIND cluster
+just export-msp org0
+just export-msp org1
+just export-msp org2
 ```
 
-Check dependencies: 
 ```shell
-just check
-```
+just create-genesis-block
 
-Create a KIND cluster, Nginx ingress, and local container registry:
-```shell
-just kind
-```
-
-Start CAs, peers, and orderers:
-```shell
-just operator 
-
-just start org0     # run in a separate "org0 admin" terminal 
-just start org1     # run in a separate "org1 admin" terminal 
-just start org2     # run in a separate "org2 admin" terminal 
-```
-
-
-## mychannel 
-
-- Bootstrap the channel and join the ordering nodes:
-```shell
-just create-genesis-block   # run in the org0 terminal
 just inspect-genesis-block
-
-just join org0
 ```
 
-- Join peer organizations to the channel: 
 ```shell
-just join org1              # run in the org1 terminal
-just join org2              # run in the org2 terminal
+just join org0
+just join org1
+just join org2
 ```
 
 
-## Chaincode 
+## Act III: Chaincode and Gateway Application 
+
+### Chaincode 
 
 - Install [asset-transfer](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/contracts/asset-transfer-typescript)
   version [0.1.4](https://github.com/hyperledgendary/full-stack-asset-transfer-guide/releases/tag/v0.1.4) with the
@@ -137,7 +102,7 @@ peer chaincode query \
 ```
 
 
-## Gateway Client Application
+### Gateway Client
 
 When the org1 and org2 CAs are created, they include a bootstrap [registration](organizations/org1/org1-ca.yaml#L50-L52) 
 and [enrollment](organizations/org1/enroll.sh#L48) of a client identity for use in gateway application development.
@@ -164,7 +129,7 @@ export CERTIFICATE=$USER_MSP_DIR/signcerts/cert.pem
 export TLS_CERT=$CORE_PEER_TLS_ROOTCERT_FILE
 
 # Connect client applications to the load-balancing gateway peer alias:
-export ENDPOINT=test-network-${ORG}-peer-gateway.${ORG}.localho.st:443
+export ENDPOINT=${ORG}-peer-gateway.${ORG}.localho.st:443
 ```
 
 - Run the gateway client application as `org1user`: 
@@ -196,7 +161,7 @@ npm start transfer banana bananaman Org1MSP
 ## Teardown
 
 ```shell
-just stop-network
+just destroy
 ```
 or
 ```shell
