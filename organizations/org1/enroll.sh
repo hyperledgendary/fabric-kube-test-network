@@ -20,6 +20,11 @@ set -euo pipefail
 . scripts/utils.sh
 
 #
+# Bind all org1 services to the "org1" namespace
+#
+export NAMESPACE=org1
+
+#
 # Save all of the organization enrollments in a local folder.
 #
 ENROLLMENTS_DIR=${PWD}/organizations/org1/enrollments
@@ -28,15 +33,15 @@ ENROLLMENTS_DIR=${PWD}/organizations/org1/enrollments
 # Before we can work with the CA, extract the CA's TLS certificate and
 # store in .pem format for access with client utilities.
 #
-write_pem org1-ca .tls.cert $ENROLLMENTS_DIR/org1-ca-tls-cert.pem
+write_pem ca .tls.cert $ENROLLMENTS_DIR/ca-tls-cert.pem
 
 # Enroll the org1 admin user.  Registration is performed by the operator according
 # to entries in the org2-ca CRD.
 enroll org1 org1admin org1adminpw
 
 # create an msp config.yaml to indicate the user is an admin for the org
-CA_CERT_NAME=${NAMESPACE}-org1-ca-ca-org1-localho-st-ca.pem
-write_msp_config org1-ca $CA_CERT_NAME $ENROLLMENTS_DIR/org1admin/msp
+CA_CERT_NAME=org1-ca-ca-org1-localho-st-ca.pem
+write_msp_config ca $CA_CERT_NAME $ENROLLMENTS_DIR/org1admin/msp
 
 # Enroll the root CA administrator such that users can later be registered and enrolled for
 # identities of transactions submitted to the ledger.

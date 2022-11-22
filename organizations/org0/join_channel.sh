@@ -20,6 +20,11 @@ set -euo pipefail
 . scripts/utils.sh
 
 #
+# Bind all org0 services to the "org0" namespace
+#
+export NAMESPACE=org0
+
+#
 # As the consortium organizer, the org0 will use osnadmin to join the ordering
 # nodes to the channel.
 #
@@ -28,7 +33,7 @@ function join_orderer() {
   print "joining orderer $orderer to $CHANNEL_NAME"
 
   # orderer URL and TLS certificate:
-  local orderer_address=${NAMESPACE}-${orderer}-admin.${org}.localho.st
+  local orderer_admin_endpoint=org0-${orderer}-admin.org0.localho.st
   local ca_file=channel-config/organizations/ordererOrganizations/org0.localho.st/orderers/${orderer}/tls/signcerts/tls-cert.pem
 
   # mTLS client key pair enrolled the org0 TLS CA:
@@ -36,7 +41,7 @@ function join_orderer() {
   local client_key=organizations/org0/enrollments/org0admin/tls/keystore/key.pem
 
   osnadmin channel join \
-    --orderer-address $orderer_address \
+    --orderer-address $orderer_admin_endpoint \
     --ca-file         $ca_file \
     --client-cert     $client_cert \
     --client-key      $client_key \
@@ -44,6 +49,6 @@ function join_orderer() {
     --config-block    channel-config/${CHANNEL_NAME}_genesis_block.pb
 }
 
-join_orderer org0-orderersnode1
-join_orderer org0-orderersnode2
-join_orderer org0-orderersnode3
+join_orderer orderernode1
+join_orderer orderernode2
+join_orderer orderernode3

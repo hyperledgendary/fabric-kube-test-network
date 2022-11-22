@@ -22,8 +22,6 @@ resources:
   - https://github.com/hyperledger-labs/fabric-operator.git/config/crd
   - operator-clusterrole.yaml
   - operator-clusterrolebinding.yaml
-
   - operator-serviceaccount.yaml
   - operator-psp.yaml
-
   - operator-manager.yaml

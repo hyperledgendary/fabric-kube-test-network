@@ -20,17 +20,22 @@ set -euo pipefail
 . scripts/utils.sh
 
 #
+# Bind all org1 services to the "org1" namespace
+#
+export NAMESPACE=org1
+
+#
 # CA
 #
 print "starting org1 CA"
 
 apply_template organizations/org1/org1-ca.yaml
 sleep 5
-wait_for ibpca org1-ca
+wait_for ibpca ca
 
 # Retrieve the org CA certificate for the bootstrap enrollment of peers/orderers.
 # This value will be substituted from the environment into the node CRDs.
-export CA_CERT=$(connection_profile_cert org1-ca .tls.cert)
+export CA_CERT=$(connection_profile_cert ca .tls.cert)
 
 
 #
@@ -44,8 +49,8 @@ apply_template organizations/org1/org1-peer1.yaml
 apply_template organizations/org1/org1-peer2.yaml
 sleep 5
 
-wait_for ibppeer org1-peer1
-wait_for ibppeer org1-peer2
+wait_for ibppeer peer1
+wait_for ibppeer peer2
 
 
 
