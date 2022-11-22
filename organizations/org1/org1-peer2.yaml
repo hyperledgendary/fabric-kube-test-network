@@ -19,11 +19,11 @@
 apiVersion: ibp.com/v1beta1
 kind: IBPPeer
 metadata:
-  name: org1-peer2
+  name: peer2
 spec:
   version: "${FABRIC_VERSION}"
   domain: "org1.localho.st"
-  peerExternalEndpoint: "test-network-org1-peer2-peer.org1.localho.st:443"
+  peerExternalEndpoint: "org1-peer2-peer.org1.localho.st:443"
   license:
     accept: true
   action:
@@ -43,12 +43,12 @@ spec:
     grpcwebImage: ghcr.io/hyperledger-labs/grpc-web
     grpcwebTag: latest
   mspID: Org1MSP
-  mspSecret: org1-peer2-secret
+  mspSecret: peer2-secret
   secret:
     enrollment:
       component:
         caname: ca
-        cahost: "test-network-org1-ca-ca.org1.localho.st"
+        cahost: "org1-ca-ca.org1.localho.st"
         caport: "443"
         catls:
           cacert: "${CA_CERT}"
@@ -56,7 +56,7 @@ spec:
         enrollsecret: "peer1pw"
       tls:
         caname: tlsca
-        cahost: "test-network-org1-ca-ca.org1.localho.st"
+        cahost: "org1-ca-ca.org1.localho.st"
         caport: "443"
         catls:
           cacert: "${CA_CERT}"
@@ -64,11 +64,11 @@ spec:
         enrollsecret: "peer1pw"
         csr:
           hosts:
-            - "org1-peer2"
-            - "org1-peer2.test-network.svc.cluster.local"
-            - "test-network-org1-peer-gateway.org1.localho.st"
+            - "peer2"
+            - "peer2.org1.svc.cluster.local"
+            - "org1-peer-gateway.org1.localho.st"
   chaincodeBuilderConfig:
-    peername: org1-peer2
+    peername: peer2
   service:
     type: ClusterIP
   stateDb: leveldb

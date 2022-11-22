@@ -77,32 +77,19 @@ unkind:
         docker rm kind-registry
     fi
 
-# Launch the operator in the target namespace
-operator:
-    scripts/start_operator.sh
 
 ###############################################################################
-# Test Network
+# TL/DR actions.  These don't exist, other than for convenience to run the
+# entire flow without splitting across multiple "org" terminals.
 ###############################################################################
 
-# Bring up the entire network
-start-network: operator
+start-network:
     just start org0
     just start org1
     just start org2
 
-# Start the nodes for an org
-start org:
-    #!/usr/bin/env bash
-    organizations/{{org}}/start.sh      # start the network service
-    organizations/{{org}}/enroll.sh     # enroll CA and org admin users
-
-# Enroll the users for an org
-enroll org:
-    organizations/{{org}}/enroll.sh
-
 # Shut down the test network and remove all certificates
-stop-network:
+destroy:
     #!/usr/bin/env bash
     rm -rf organizations/org0/enrollments && echo "org0 enrollments deleted"
     rm -rf organizations/org1/enrollments && echo "org1 enrollments deleted"
@@ -110,10 +97,13 @@ stop-network:
     rm -rf organizations/org0/chaincode   && echo "org0 chaincode packages deleted"
     rm -rf organizations/org1/chaincode   && echo "org1 chaincode packages deleted"
     rm -rf organizations/org2/chaincode   && echo "org2 chaincode packages deleted"
+
     rm -rf channel-config/organizations   && echo "consortium MSP deleted"
     rm channel-config/{{CHANNEL_NAME}}_genesis_block.pb && echo {{CHANNEL_NAME}} " genesis block deleted"
 
-    kubectl delete ns {{ NAMESPACE }} --ignore-not-found=true
+    kubectl delete ns org0 --ignore-not-found=true
+    kubectl delete ns org1 --ignore-not-found=true
+    kubectl delete ns org2 --ignore-not-found=true
 
 # Check that all network services are running
 check-network:
@@ -121,36 +111,53 @@ check-network:
 
 
 ###############################################################################
+# Test Network
+###############################################################################
+
+# Create the org namespace and start the operator for an org
+init org:
+    #!/usr/bin/env bash
+    export NAMESPACE={{org}} # todo: move to an org directory?
+    scripts/start_operator.sh
+
+# Start the nodes for an org
+start org: (init org)
+    organizations/{{org}}/start.sh
+
+# todo: clear enrollments, cc packages, etc.
+# Stop the nodes for an org
+stop org:
+    kubectl delete ns {{org}} --ignore-not-found=true
+
+# todo: + dependency (start org)?
+# Enroll the users for an org
+enroll org:
+    organizations/{{org}}/enroll.sh
+
+
+###############################################################################
 # Channel Construction
 ###############################################################################
 
-# Create a channel and join all orgs to the consortium
-create-channel: create-genesis-block join-orgs
+# Create the channel genesis block
+create-genesis-block: check-network gather-msp
+    channel-config/create_genesis_block.sh
 
-# Export org MSP certificates to the consortium organizer
-export-msp org:
-    organizations/{{org}}/export_msp.sh
-
+# todo: include this?  Which org is running the target?
 # Export the MSP certificates for all orgs
 gather-msp:
     just export-msp org0
     just export-msp org1
     just export-msp org2
 
-# Create the channel genesis block
-create-genesis-block: check-network gather-msp
-    channel-config/create_genesis_block.sh
+# Export org MSP certificates to the consortium organizer
+export-msp org:
+    organizations/{{org}}/export_msp.sh
 
 # inspect the genesis block
 inspect-genesis-block:
     #!/usr/bin/env bash
     configtxgen -inspectBlock channel-config/mychannel_genesis_block.pb | jq
-
-# Join all orgs to the channel
-join-orgs:
-    just join org0
-    just join org1
-    just join org2
 
 # Join an org to the channel
 join org:
@@ -160,11 +167,6 @@ join org:
 ###############################################################################
 # Chaincode and Gateway Appplication Development
 ###############################################################################
-
-# Install a smart contract on all orgs
-install-chaincode:
-    just install-cc org1
-    just install-cc org2
 
 # Install a smart contract on all peers in an org
 install-cc org:
