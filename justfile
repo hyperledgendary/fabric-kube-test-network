@@ -88,22 +88,6 @@ start-network:
     just start org1
     just start org2
 
-stop-network:
-    just stop org0
-    just stop org1
-    just stop org2
-
-# Launch the operator in the target namespace
-# operator:
-#     scripts/start_operator.sh
-
-# Bring up the entire network
-# start-network: operator
-#     just start org0
-#     just start org1
-#     just start org2
-
-
 # Shut down the test network and remove all certificates
 destroy:
     #!/usr/bin/env bash
@@ -121,18 +105,14 @@ destroy:
     kubectl delete ns org1 --ignore-not-found=true
     kubectl delete ns org2 --ignore-not-found=true
 
-
 # Check that all network services are running
 check-network:
     scripts/check-network.sh
 
 
-
-
 ###############################################################################
 # Test Network
 ###############################################################################
-
 
 # Create the org namespace and start the operator for an org
 init org:
@@ -149,12 +129,10 @@ start org: (init org)
 stop org:
     kubectl delete ns {{org}} --ignore-not-found=true
 
-
 # todo: + dependency (start org)?
 # Enroll the users for an org
 enroll org:
     organizations/{{org}}/enroll.sh
-
 
 
 ###############################################################################

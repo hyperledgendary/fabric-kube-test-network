@@ -29,7 +29,7 @@ function kind_with_nginx() {
 
   create_cluster
 
-  start_cert_manager
+  #start_cert_manager
 
   start_nginx
 

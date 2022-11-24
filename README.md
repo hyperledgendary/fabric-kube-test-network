@@ -9,20 +9,45 @@ Objective:  provide _crystal clarity_ to Fabric's _MSP_ and certificate structur
 focusing on the inductive construction of a multi-organization channel.
 
 ![Dark Side of the Moon](https://upload.wikimedia.org/wikipedia/en/3/3b/Dark_Side_of_the_Moon.png)
-###### (The Dark Side of the Moon [From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png) )
-
-For best results, start a new shell for each organization in the consortium.  Imagine that each
-shell is running commands on behalf of the org's Fabric administrator.
+###### The Dark Side of the Moon - Pink Floyd ([From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png) )
 
 
 ## Venue:
 
-Check dependencies: 
+To run this sample locally, clone the git repo and follow the dependency checklist:
 ```shell
-./scripts/check.sh 
+./scripts/check.sh
 ```
 
-Create a KIND kubernetes cluster: 
+On x86 / amd64 system, the sample can also be run within a self-contained
+[multipass](https://multipass.run/install) virtual machine:  
+```shell
+multipass launch \
+  --name        fabric-dev \
+  --disk        80G \
+  --cpus        8 \
+  --mem         8G \
+  --cloud-init  https://raw.githubusercontent.com/hyperledgendary/fabric-kube-test-network/main/cloud-config.yaml
+```
+```shell
+multipass shell fabric-dev
+```
+
+(Note: [fabric binaries](https://github.com/hyperledger/fabric/releases/) are not available for the Apple M1 / arm64 
+architecture.)
+
+For best results, start a new terminal for each organization in the consortium.  Imagine that each
+shell is running commands on behalf of the org's Fabric administrator.
+
+
+## Stage:
+
+```shell
+git clone https://github.com/hyperledgendary/fabric-kube-test-network.git
+cd fabric-kube-test-network
+```
+
+Create a KIND kubernetes cluster, *.localho.st ingress, and local container registry: 
 ```shell
 just kind 
 ```
@@ -71,35 +96,43 @@ just join org2
 
 ## Act III: Chaincode and Gateway Application 
 
-### Chaincode 
+Install [asset-transfer](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/contracts/asset-transfer-typescript)
+version [0.1.4](https://github.com/hyperledgendary/full-stack-asset-transfer-guide/releases/tag/v0.1.4) with the
+Kubernetes [chaincode builder](https://github.com/hyperledger-labs/fabric-builder-k8s):
 
-- Install [asset-transfer](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/contracts/asset-transfer-typescript)
-  version [0.1.4](https://github.com/hyperledgendary/full-stack-asset-transfer-guide/releases/tag/v0.1.4) with the
-  Kubernetes [chaincode builder](https://github.com/hyperledger-labs/fabric-builder-k8s):
 ```shell
 just install-cc org1
 just install-cc org2
 ```
 
-- Open a new terminal window to run interactive fabric CLI commands as the **org1 admin** (optional):
-```shell
-export PATH=$PWD/bin:$PATH
-source <(just show-context Org1MSP org1 peer1)
-```
+### Ad Hoc peer CLI: 
 
-- Open a new terminal window to run fabric CLI commands as the **org2 admin** (optional):
+org1: 
 ```shell
-export PATH=$PWD/bin:$PATH
-source <(just show-context Org2MSP org2 peer1)
-```
+export ORG=org1
+export MSP_ID=Org1MSP 
 
-- Query chaincode:
-```shell
+source <(just show-context $MSP_ID $ORG peer1)
+
 peer chaincode query \
   -n asset-transfer \
   -C mychannel \
-  -c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'     
+  -c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'  
 ```
+
+org2: 
+```shell
+export ORG=org2
+export MSP_ID=Org2MSP 
+
+source <(just show-context $MSP_ID $ORG peer1) 
+
+peer chaincode query \
+  -n asset-transfer \
+  -C mychannel \
+  -c '{"Args":["org.hyperledger.fabric:GetMetadata"]}' 
+```
+
 
 
 ### Gateway Client
@@ -107,15 +140,11 @@ peer chaincode query \
 When the org1 and org2 CAs are created, they include a bootstrap [registration](organizations/org1/org1-ca.yaml#L50-L52) 
 and [enrollment](organizations/org1/enroll.sh#L48) of a client identity for use in gateway application development.
 
-If the `just show-context` command has been loaded into the terminal, the peer, orderer, and
+If the `just show-context` commands (above) have been loaded into the terminal, the peer, orderer, and
 CA certificate paths have been loaded into the environment.
 
-In an org admin shell, load the gateway client environment necessary to run the [trader-typescript](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/applications/trader-typescript) 
-sample gateway application:
+In an org admin shell, load the gateway client environment for [trader-typescript](https://github.com/hyperledger/fabric-samples/tree/main/full-stack-asset-transfer-guide/applications/trader-typescript): 
 ```shell
-export MSP_ID=Org1MSP        
-export ORG=org1
-
 # local MSP enrollment folder for the org client user
 export USER_MSP_DIR=$PWD/organizations/$ORG/enrollments/${ORG}user/msp
 
@@ -132,15 +161,16 @@ export TLS_CERT=$CORE_PEER_TLS_ROOTCERT_FILE
 export ENDPOINT=${ORG}-peer-gateway.${ORG}.localho.st:443
 ```
 
-- Run the gateway client application as `org1user`: 
+- Compile the trader-typescript application:
 ```shell
-# cd (somehow to) fabric-samples/full-stack-asset-transfer-guide/applications/trader-typescript 
+git clone https://github.com/hyperledger/fabric-samples.git /tmp/fabric-samples 
+pushd /tmp/fabric-samples/full-stack-asset-transfer-guide/applications/trader-typescript
 
 npm install
 ``` 
 
 ```shell
-# Create a yellow banana token owned by appleman@org1 
+# Create a yellow banana token
 npm start create banana bananaman yellow
 
 npm start getAllAssets
@@ -161,9 +191,18 @@ npm start transfer banana bananaman Org1MSP
 ## Teardown
 
 ```shell
+# Tear down the network 
 just destroy
 ```
 or
 ```shell
+# Tear down the kubernetes cluster
 just unkind
+```
+
+or 
+```shell
+# Tear down the multipass VM: 
+multipass delete fabric-dev
+multipass purge 
 ```
