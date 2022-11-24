@@ -170,7 +170,7 @@ npm install
 ``` 
 
 ```shell
-# Create a yellow banana token owned by appleman@org1 
+# Create a yellow banana token
 npm start create banana bananaman yellow
 
 npm start getAllAssets
