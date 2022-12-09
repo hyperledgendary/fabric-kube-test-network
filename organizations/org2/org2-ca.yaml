@@ -79,8 +79,8 @@ spec:
     pvc: {}
   domain: org2.localho.st
   images:
-    caImage: hyperledger/fabric-ca
-    caTag: 1.5.5
+    caImage: ${CA_IMAGE}
+    caTag: ${CA_IMAGE_TAG}
     caInitImage: registry.access.redhat.com/ubi8/ubi-minimal
     caInitTag: latest
   ingress:

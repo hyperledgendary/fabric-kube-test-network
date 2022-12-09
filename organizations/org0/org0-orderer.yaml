@@ -109,8 +109,8 @@ spec:
   images:
     ordererInitImage: registry.access.redhat.com/ubi8/ubi-minimal
     ordererInitTag: latest
-    ordererImage: hyperledger/fabric-orderer
-    ordererTag: 2.4.7
+    ordererImage: ${ORDERER_IMAGE}
+    ordererTag: ${ORDERER_IMAGE_TAG}
     grpcwebImage: ghcr.io/hyperledger-labs/grpc-web
     grpcwebTag: latest
   ingress:
