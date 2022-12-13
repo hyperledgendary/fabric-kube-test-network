@@ -47,7 +47,7 @@ check:
 
 CLUSTER_NAME        := env_var_or_default("TEST_NETWORK_CLUSTER_NAME",      "kind")
 NAMESPACE           := env_var_or_default("TEST_NETWORK_NAMESPACE",         "test-network")
-OPERATOR_IMAGE      := env_var_or_default("TEST_NETWORK_OPERATOR_IMAGE",    "ghcr.io/hyperledger-labs/fabric-operator:latest-amd64")
+OPERATOR_IMAGE      := env_var_or_default("TEST_NETWORK_OPERATOR_IMAGE",    "ghcr.io/hyperledger-labs/fabric-operator:1.0")
 FABRIC_VERSION      := env_var_or_default("TEST_NETWORK_FABRIC_VERSION",    "2.4.7")
 FABRIC_CA_VERSION   := env_var_or_default("TEST_NETWORK_FABRIC_CA_VERSION", "1.5.5")
 CA_IMAGE            := env_var_or_default("TEST_NETWORK_CA_IMAGE",          "hyperledger/fabric-ca")
