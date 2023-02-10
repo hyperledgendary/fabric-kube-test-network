@@ -12,35 +12,33 @@ focusing on the inductive construction of a multi-organization channel.
 ###### The Dark Side of the Moon - Pink Floyd ([From Wikipedia, the free encyclopedia](https://en.wikipedia.org/wiki/File:Dark_Side_of_the_Moon.png) )
 
 
-## Venue:
+## The Venue:
 
 To run this sample locally, clone the git repo and follow the dependency checklist:
 ```shell
 ./scripts/check.sh
 ```
 
-On x86 / amd64 system, the sample can also be run within a self-contained
-[multipass](https://multipass.run/install) virtual machine:  
-```shell
-multipass launch \
-  --name        fabric-dev \
-  --disk        80G \
-  --cpus        8 \
-  --mem         8G \
-  --cloud-init  https://raw.githubusercontent.com/hyperledgendary/fabric-kube-test-network/main/cloud-config.yaml
-```
-```shell
-multipass shell fabric-dev
-```
+This scenario is _slow_ but _predictable_.  The focus in this example is not efficiency, but to
+demonstrate the construction of a multi-org network, highlighting a production-realistic scenario
+of running a Fabric network spanning multiple Kubernetes clusters, namespaces, or cloud-vendors.
 
-(Note: [fabric binaries](https://github.com/hyperledger/fabric/releases/) are not available for the Apple M1 / arm64 
-architecture.)
+In typical examples of constructing a fabric test network, the use of `cryptogen` is highlighted as
+an efficient and convenient mechanism to avoid complexities of CA bootstrap, node enrollments, and
+the exchange of consortium MSP certificates as part of the channel configuration.
 
-For best results, start a new terminal for each organization in the consortium.  Imagine that each
-shell is running commands on behalf of the org's Fabric administrator.
+By contrast, this scenario sets up a multi-org Fabric network, illustrating a _correct_ ordering of
+CA initialization, node / admin enrollments, MSP certificate exchange, and channel construction
+without the assumption of a central file system or volume mount.  With minor modifications, this
+example can be extended to use `rsync` or an SSH protocol to exchange channel MSP for a network
+spanning multiple, independent Kubernetes clusters.  For convenience, this example allocates a
+dedicated k8s namespace for each organization, running on a shared virtual KIND cluster.
+
+For best results, start a new terminal for each organization in the consortium.  (Imagine that each
+shell is running commands on behalf of the org's Fabric administrator.)
 
 
-## Stage:
+## The Stage:
 
 ```shell
 git clone https://github.com/hyperledgendary/fabric-kube-test-network.git
@@ -112,7 +110,7 @@ org1:
 export ORG=org1
 export MSP_ID=Org1MSP 
 
-source <(just show-context $MSP_ID $ORG peer1)
+export $(just show-context $MSP_ID $ORG peer1)
 
 peer chaincode query \
   -n asset-transfer \
@@ -125,14 +123,13 @@ org2:
 export ORG=org2
 export MSP_ID=Org2MSP 
 
-source <(just show-context $MSP_ID $ORG peer1) 
+export $(just show-context $MSP_ID $ORG peer1) 
 
 peer chaincode query \
   -n asset-transfer \
   -C mychannel \
   -c '{"Args":["org.hyperledger.fabric:GetMetadata"]}' 
 ```
-
 
 
 ### Gateway Client
@@ -198,11 +195,4 @@ or
 ```shell
 # Tear down the kubernetes cluster
 just unkind
-```
-
-or 
-```shell
-# Tear down the multipass VM: 
-multipass delete fabric-dev
-multipass purge 
 ```

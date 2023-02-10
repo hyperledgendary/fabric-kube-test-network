@@ -48,7 +48,7 @@ check:
 CLUSTER_NAME        := env_var_or_default("TEST_NETWORK_CLUSTER_NAME",      "kind")
 NAMESPACE           := env_var_or_default("TEST_NETWORK_NAMESPACE",         "test-network")
 OPERATOR_IMAGE      := env_var_or_default("TEST_NETWORK_OPERATOR_IMAGE",    "ghcr.io/hyperledger-labs/fabric-operator:1.0")
-FABRIC_VERSION      := env_var_or_default("TEST_NETWORK_FABRIC_VERSION",    "2.5.0-alpha3")
+FABRIC_VERSION      := env_var_or_default("TEST_NETWORK_FABRIC_VERSION",    "2.5.0-beta")
 FABRIC_CA_VERSION   := env_var_or_default("TEST_NETWORK_FABRIC_CA_VERSION", "1.5.6-beta3")
 CA_IMAGE            := env_var_or_default("TEST_NETWORK_CA_IMAGE",          "hyperledger/fabric-ca")
 CA_IMAGE_TAG        := env_var_or_default("TEST_NETWORK_CA_IMAGE_TAG",      FABRIC_CA_VERSION)
@@ -181,11 +181,9 @@ install-cc org:
 # Display env for targeting a peer with the Fabric binaries
 show-context msp org peer:
     #!/usr/bin/env bash
-    . scripts/utils.sh
+    . {{CWDIR}}/scripts/utils.sh
     appear_as {{msp}} {{org}} {{peer}}
 
-    # source <(just show-context Org1MSP org1 peer1)
-    export | egrep "CORE_PEER|FABRIC_|ORDERER_" | sort
-
-    # todo: same as above but portable across all shells?
-    # export $(just show-context Org1MSP org1 peer1 | xargs)
+    # use export to load the peer context into the current environment:
+    # export $(just show-context Org1MSP org1 peer1)
+    printenv | egrep "CORE_PEER|FABRIC_|ORDERER_" | sort
